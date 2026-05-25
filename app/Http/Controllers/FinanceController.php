@@ -122,25 +122,31 @@ class FinanceController extends Controller
         $transactions = Auth::user()->transactions()->orderBy('transaction_date', 'desc')->get();
 
         $filename = "transactions_export_" . date('Y-m-d') . ".csv";
-        $handle = fopen('php://output', 'w');
+        
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
 
-        header('Content-Type: text/csv');
-        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        $callback = function() use ($transactions) {
+            $handle = fopen('php://output', 'w');
+            
+            // Add CSV headers
+            fputcsv($handle, ['Date', 'Title', 'Type', 'Amount ($)']);
 
-        // Add CSV headers
-        fputcsv($handle, ['Date', 'Title', 'Type', 'Amount ($)']);
+            // Add rows
+            foreach ($transactions as $transaction) {
+                fputcsv($handle, [
+                    $transaction->transaction_date,
+                    $transaction->title,
+                    ucfirst($transaction->type),
+                    $transaction->amount
+                ]);
+            }
+            
+            fclose($handle);
+        };
 
-        // Add rows
-        foreach ($transactions as $transaction) {
-            fputcsv($handle, [
-                $transaction->transaction_date,
-                $transaction->title,
-                ucfirst($transaction->type),
-                $transaction->amount
-            ]);
-        }
-
-        fclose($handle);
-        exit;
+        return response()->stream($callback, 200, $headers);
     }
 }

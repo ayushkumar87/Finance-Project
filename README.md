@@ -1,59 +1,101 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Personal Finance Dashboard Project
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This is a Laravel-based Personal Finance Dashboard application designed to help users track their income and expenses, view financial literacy resources, and use financial calculators.
 
-## About Laravel
+## Prerequisites
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Before you can run this project on your system, you must have the following installed:
+- **PHP** (v8.2 or higher)
+- **Composer** (Dependency manager for PHP)
+- **Node.js & npm** (For compiling frontend assets like Tailwind CSS via Vite)
+- **XAMPP / MySQL Server** (To run the MySQL database)
+- **Git** (optional, if cloning)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Installation & Setup Instructions
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Follow these steps carefully to set up and run the project locally:
 
-## Learning Laravel
+### 1. Extract or Clone the Project
+If you received this as a zip file, extract it into a folder.
+If you are using Git, clone the repository and navigate into the folder:
+```bash
+cd myproject
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 2. Install PHP Dependencies
+Run Composer to install all the required backend packages:
+```bash
+composer install
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 3. Install Frontend Dependencies
+Run npm to install Vite, Tailwind CSS, and other frontend tools:
+```bash
+npm install
+```
 
-## Laravel Sponsors
+### 4. Setup Environment Variables
+Duplicate the example environment file to create your own configuration:
+```bash
+# On Windows (Command Prompt / PowerShell)
+copy .env.example .env
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# On Mac / Linux
+cp .env.example .env
+```
+Open the `.env` file in your text editor and ensure the database settings match your local XAMPP MySQL configuration:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=myproject
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-### Premium Partners
+### 5. Generate Application Key
+Generate the unique application key for Laravel encryption:
+```bash
+php artisan key:generate
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 6. Set Up the Database
+Before running migrations, you must create the database in XAMPP:
+1. Open the **XAMPP Control Panel** and start **Apache** and **MySQL**.
+2. Go to `http://localhost/phpmyadmin` in your web browser.
+3. Click on **New** on the left sidebar to create a new database.
+4. Name the database `myproject` and click **Create**.
 
-## Contributing
+Once the database is created, run the following command in your terminal to create your database tables and seed them with a default test user:
+```bash
+php artisan migrate --seed
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Running the Application
 
-## Code of Conduct
+To run the application, you need to start **both** the backend and frontend servers simultaneously.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Start the Backend Server (Terminal 1)
+Open a terminal in the project folder and run:
+```bash
+php artisan serve
+```
+This will start the PHP server, usually at `http://127.0.0.1:8000`.
 
-## Security Vulnerabilities
+### Start the Frontend Server (Terminal 2)
+Open a **second, separate terminal** in the same folder and run:
+```bash
+npm run dev
+```
+This starts Vite to compile your Tailwind CSS and Javascript in real-time.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### View the App
+Open your web browser and go to:
+**http://127.0.0.1:8000**
 
-## License
+You can now register a new account or log in with the test credentials provided by the database seeder!
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Default Test User
+If you ran `php artisan migrate --seed`, you can log in using:
+- **Email:** [EMAIL_ADDRESS] (replace with your actual email if you edited the seeder)
+- **Password:** 12345678
