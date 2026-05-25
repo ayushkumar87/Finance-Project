@@ -16,7 +16,47 @@ class FinanceController extends Controller
         $totalExpense = Auth::user()->transactions()->where('type', 'expense')->sum('amount');
         $balance = $totalIncome - $totalExpense;
 
-        return view('dashboard', compact('transactions', 'totalIncome', 'totalExpense', 'balance'));
+        $savingsRate = $totalIncome > 0 ? round(($balance / $totalIncome) * 100, 1) : 0;
+
+        // Last 7 days trend data
+        $days = [];
+        $dailyIncome = [];
+        $dailyExpense = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i)->format('Y-m-d');
+            $formattedDate = now()->subDays($i)->format('M d');
+            $days[] = $formattedDate;
+            
+            $dailyIncome[] = (float) Auth::user()->transactions()
+                ->where('type', 'income')
+                ->whereDate('transaction_date', $date)
+                ->sum('amount');
+                
+            $dailyExpense[] = (float) Auth::user()->transactions()
+                ->where('type', 'expense')
+                ->whereDate('transaction_date', $date)
+                ->sum('amount');
+        }
+
+        // Expense Category Breakdown
+        $categoryBreakdown = Auth::user()->transactions()
+            ->where('type', 'expense')
+            ->selectRaw('category, SUM(amount) as total')
+            ->groupBy('category')
+            ->orderBy('total', 'desc')
+            ->get();
+
+        return view('dashboard', compact(
+            'transactions', 
+            'totalIncome', 
+            'totalExpense', 
+            'balance', 
+            'savingsRate', 
+            'days', 
+            'dailyIncome', 
+            'dailyExpense',
+            'categoryBreakdown'
+        ));
     }
 
     public function index(Request $request)
@@ -43,6 +83,7 @@ class FinanceController extends Controller
             'title' => 'required|string|max:255',
             'amount' => 'required|numeric|min:0.01',
             'type' => 'required|in:income,expense',
+            'category' => 'required|string|max:255',
             'transaction_date' => 'required|date',
         ]);
 
@@ -69,6 +110,11 @@ class FinanceController extends Controller
     public function news()
     {
         return view('news');
+    }
+
+    public function calculators()
+    {
+        return view('calculators');
     }
 
     public function exportCsv()

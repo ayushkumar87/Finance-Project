@@ -17,6 +17,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/transactions', [FinanceController::class, 'store'])->name('transactions.store');
     Route::delete('/transactions/{transaction}', [FinanceController::class, 'destroy'])->name('transactions.destroy');
     Route::get('/transactions/export', [FinanceController::class, 'exportCsv'])->name('transactions.export');
+    Route::get('/calculators', [FinanceController::class, 'calculators'])->name('calculators');
 });
 
 Route::get('/literacy', [FinanceController::class, 'literacy'])->name('literacy');
